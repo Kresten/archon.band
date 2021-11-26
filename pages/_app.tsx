@@ -1,30 +1,24 @@
-import App from 'next/app';
+import '@/styles/index.css';
+import App, { AppContext, AppProps } from 'next/app';
 import Head from 'next/head';
-import 'tailwindcss/tailwind.css';
-import '../assets/css/style.css';
 import { createContext } from 'react';
-import { getStrapiMedia } from '../lib/media';
+import { GlobalData } from 'types/singleTypes';
 import { fetchAPI } from '../lib/api';
-import { StrapiMedia } from '../types';
 
-type GlobalContext = {
-  favicon?: StrapiMedia;
-  siteName?: string;
-  defaultSeo?: {
-    metaTitle?: string;
-    metaDescription?: string;
-    shareImage?: StrapiMedia;
-  };
-};
+export const GlobalContext = createContext<GlobalData>({});
 
-export const GlobalContext = createContext<GlobalContext>({});
-
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   const { global } = pageProps;
   return (
     <>
       <Head>
-        <link rel='shortcut icon' href={getStrapiMedia(global.favicon)} />
+        <link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png' />
+        <link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png' />
+        <link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png' />
+        <link rel='manifest' href='/site.webmanifest' />
+        <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#5bbad5' />
+        <meta name='msapplication-TileColor' content='#da532c' />
+        <meta name='theme-color' content='#ff0000' />
       </Head>
       <GlobalContext.Provider value={global}>
         <Component {...pageProps} />
@@ -37,7 +31,7 @@ function MyApp({ Component, pageProps }) {
 // have getStaticProps. So article, category and home pages still get SSG.
 // Hopefully we can replace this with getStaticProps once this issue is fixed:
 // https://github.com/vercel/next.js/discussions/10949
-MyApp.getInitialProps = async (ctx) => {
+MyApp.getInitialProps = async (ctx: AppContext) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(ctx);
   // Fetch global site settings from Strapi

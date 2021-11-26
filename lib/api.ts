@@ -4,7 +4,20 @@ export function getStrapiURL(path = ''): string {
 
 export async function fetchAPI(path: string) {
   const requestUrl = getStrapiURL(path);
-  const response = await fetch(requestUrl);
-  const data = await response.json();
-  return data;
+  const res = await fetch(requestUrl);
+  if (!res.ok) {
+    const errorMessage = await res.text();
+    const status = res.status;
+    throw new NetworkError(errorMessage, status);
+  }
+  const json = await res.json();
+  return json;
+}
+
+class NetworkError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+    this.status = status;
+    this.name = 'NetworkError';
+  }
 }
